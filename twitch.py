@@ -346,7 +346,7 @@ def start_threads(threads):
                         Proxies.proxies_list = request_proxies(Proxies.proxy_url)
 
 
-class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
+class ExampleApp(QtWidgets.QMainWindow, Ui_MainWindow):
     def __init__(self):
 
         super().__init__()
@@ -509,7 +509,7 @@ def load_data_from_file():
 
 def main():
     app = QtWidgets.QApplication(sys.argv)
-    window = MainWindow()
+    window = ExampleApp()
     window.show()
 
     app.exec_()
