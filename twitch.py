@@ -12,7 +12,7 @@ from requests import RequestException
 from fake_useragent import UserAgent
 from python_rucaptcha import FunCaptcha
 from python_rucaptcha.RuCaptchaControl import RuCaptchaControl
-
+from string import Formatter, Template
 from generate_username import generate_username
 import threading
 from gui import Ui_MainWindow
@@ -110,7 +110,7 @@ class Registration:
 
     def check_proxy(self):
         try:
-            self.session.get('https://www.twitch.tv', timeout=15)
+            self.session.get('https://www.twitch.tv', timeout=10)
         except (RequestException, ConnectionError):
             return False
         return True
@@ -272,9 +272,9 @@ class Registration:
         self.received_captcha_id = send_captcha.json()['request']
         if 'ERROR_NO_SLOT_AVAILABLE' in self.received_captcha_id:
             return None
-        
+
         retries = 0
-        while True: 
+        while True:
             if retries > 20:
                 return None
             time.sleep(10)
@@ -292,23 +292,6 @@ class Registration:
 
             if received_captcha.json()['status'] == 1:
                 return received_captcha.json()['request']
-
-    # def solve_captcha(self):
-    #     print(f'[{self.thread}] Waiting captcha')
-    #     answer = FunCaptcha.FunCaptcha(rucaptcha_key=self.rucaptcha_key, service_type='rucaptcha') \
-    #         .captcha_handler(
-    #         public_key=self.caps_token,
-    #         page_url='https://www.twitch.tv/signup?no-mobile-redirect=true&json=1',
-    #         surl='https://client-api.arkoselabs.com',
-    #         proxy=self.proxy,
-    #         proxytype=Proxies.proxy_type.upper()
-    #     )
-    #
-    #     if not answer['error']:
-    #         self.received_captcha_id = answer['taskId']
-    #     elif answer['error']:
-    #         print(answer['errorBody'])
-    #     return answer['captchaSolve']
 
 
 def thread_starter(val):
@@ -346,11 +329,25 @@ def start_threads(threads):
                         Proxies.proxies_list = request_proxies(Proxies.proxy_url)
 
 
-class ExampleApp(QtWidgets.QMainWindow, Ui_MainWindow):
+class DeltaTemplate(Template):
+    delimiter = '%'
+
+
+def strfdelta(tdelta, fmt):
+    d = {"D": tdelta.days}
+    hours, rem = divmod(tdelta.seconds, 3600)
+    minutes, seconds = divmod(rem, 60)
+    d["H"] = '{:02d}'.format(hours)
+    d["M"] = '{:02d}'.format(minutes)
+    d["S"] = '{:02d}'.format(seconds)
+    t = DeltaTemplate(fmt)
+    return t.substitute(**d)
+
+
+class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def __init__(self):
 
         super().__init__()
-
         self.setupUi(self)
         self.pushButton.clicked.connect(self.get_proxy_path)
         self.pushButton_2.clicked.connect(self.get_proxy_url)
@@ -363,10 +360,17 @@ class ExampleApp(QtWidgets.QMainWindow, Ui_MainWindow):
         if _proxy_url != '':
             self.proxy_url_lineEdit.setText(_proxy_url)
 
+        self.time_start = None
+
         self.stat_updater_timer = QTimer()
         self.stat_updater_timer.setInterval(1000)
         self.stat_updater_timer.timeout.connect(self.stat_updater)
         self.stat_updater_timer.start()
+
+    def title_timer(self):
+        # self.setWindowTitle(str(datetime.datetime.now().strftime("%H:%M:%S")))
+        delta = datetime.datetime.now() - self.time_start
+        self.setWindowTitle(str(strfdelta(delta, "%H:%M:%S")))
 
     def get_proxy_url(self):
         try:
@@ -421,6 +425,7 @@ class ExampleApp(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def start_program(self):
         global path
+        Logger.thread_flag = False
         try:
             Logger.accounts = int(self.accounts_input.text())
             Logger.threads_amount = int(self.threads_input.text())
@@ -452,20 +457,23 @@ class ExampleApp(QtWidgets.QMainWindow, Ui_MainWindow):
         my_thread.setDaemon(True)
         my_thread.start()
         self.pushButtonStart.setDisabled(True)
+        self.time_start = datetime.datetime.now()
+        self.update_title_timer = QTimer()
+        self.update_title_timer.setInterval(1000)
+        self.update_title_timer.timeout.connect(self.title_timer)
+        self.update_title_timer.start()
 
-    @staticmethod
-    def disable_thread_start():
+    def disable_thread_start(self):
+        if self.update_title_timer:
+            self.update_title_timer.stop()
         Logger.thread_flag = True
+        self.pushButtonStart.setEnabled(True)
 
     def stat_updater(self):
         self.label_2.setText("Errors:" + str(Logger.errors))
         self.label.setText("Accounts:" + str(Logger.registered_accounts))
         self.label_4.setText("Threads:" + str(Logger.active_threads_count))
         self.label_3.setText("Proxies:" + str(len(Proxies.proxies_list)))
-        if threading.activeCount() == 1 and not self.pushButtonStart.isEnabled():
-            time.sleep(2)
-            if threading.activeCount() == 1:
-                self.pushButtonStart.setDisabled(False)
 
 
 def save_data_to_file(**kwargs):
@@ -509,7 +517,7 @@ def load_data_from_file():
 
 def main():
     app = QtWidgets.QApplication(sys.argv)
-    window = ExampleApp()
+    window = MainWindow()
     window.show()
 
     app.exec_()
