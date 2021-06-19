@@ -246,7 +246,7 @@ class Registration:
                 print(answer["errorBody"])
 
             with open("all_tokens.txt", 'a') as all_tokens:
-                all_tokens.write(f'{self.username}:{self.password}{session_result.json()['access_token']}\n')
+                all_tokens.write(f'{self.username}:{self.password}{session_result.json()["access_token"]}\n')
 
             with open(path + "/log_pass.txt", 'a') as log_pass, open(path + "/tokens.txt", 'a') as tokens:
                 log_pass.write(self.username + ":" + self.password + '\n')
