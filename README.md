@@ -15,6 +15,7 @@ pip install -r requirements.txt
 ```bash
 py twitch.py
 ```
+- Register and get api key from [Rucaptcha](https://rucaptcha.com?from=2897944)
 - Load proxy via url or chose proxy file, select type
 - Select threads and account count
 - Click `Start` button
