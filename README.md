@@ -1,6 +1,6 @@
 # Twitch autoreg
 
-Auto Registrator twitch accounts
+Auto Registrator twitch accounts / Авторег твич аккаунтов 
 
 ## Installation
 
