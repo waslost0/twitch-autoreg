@@ -22,7 +22,10 @@ py twitch.py
 
 ![screenshots](https://i.imgur.com/cPMVW1G.png)
 
+## Buy me a coffee
+<a href="https://www.buymeacoffee.com/waslost" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png" alt="Buy Me A Coffee"></a>
 
+<a href="https://qiwi.com/n/WASLOST" target="_blank"><img width="70" src="https://i.imgur.com/jomb5KW.png" alt="Buy Me A Coffee"></a>
 
 
 
