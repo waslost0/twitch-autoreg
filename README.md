@@ -20,6 +20,14 @@ py twitch.py
 - Select threads and account count
 - Click `Start` button
 
+## Follow by tokens
+```bash
+py main.py
+```
+- Enter channel name
+- Followers count
+
+
 ![screenshots](https://i.imgur.com/cPMVW1G.png)
 
 ## Buy me a coffee
