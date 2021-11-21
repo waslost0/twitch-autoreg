@@ -2,6 +2,8 @@
 
 Auto Registrator twitch accounts / Авторег твич аккаунтов 
 
+![screenshots](https://i.imgur.com/cPMVW1G.png)
+
 ## Installation
 
 1. Download and install Python
@@ -26,9 +28,6 @@ py main.py
 ```
 - Enter channel name
 - Followers count
-
-
-![screenshots](https://i.imgur.com/cPMVW1G.png)
 
 ## Buy me a coffee
 <a href="https://www.buymeacoffee.com/waslost" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png" alt="Buy Me A Coffee"></a>
